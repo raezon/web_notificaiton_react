@@ -19,6 +19,28 @@ const ChatApp = () => {
   };
 
   const handleJoinRoom = async () => {
+
+      try {
+        const response = await fetch(
+          "http://localhost:3000/v1/chat/register",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${bearerToken}`, // Include the bearer token in the
+            },
+            body: JSON.stringify({ socketId: socket.id }),
+          }
+        );
+
+        if (response.ok) {
+          console.log("Socket registered successfully");
+        } else {
+          console.error("Failed to register socket");
+        }
+      } catch (error) {
+        console.error("Error registering socket", error);
+      }
     try {
       const response = await fetch(`${BASE_API_URL}/v1/chat/joinRoom`, {
         method: "POST",
@@ -27,7 +49,7 @@ const ChatApp = () => {
           Authorization: `Bearer ${bearerToken}`, // Include the bearer token in the
         },
         body: JSON.stringify({
-          roomId: Number(21),
+          roomId: Number(3),
         }),
       });
 
@@ -72,28 +94,28 @@ const ChatApp = () => {
 
   useEffect(() => {
     socketRef.current = socket;
-    socket.on("connect",async () => {
-          console.log("giiiiiiiiiiiii");
-          socket.emit("register", { userId: 10961096, socketId: socket.id });
-                try{
-          const response = await fetch("http://localhost:3000/v1/chat/register", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ userId: 10385756, socketId: socket.id }),
-          });
-
-            if (response.ok) {
-              console.log("Socket registered successfully");
-            } else {
-              console.error("Failed to register socket");
-            }
-          } catch (error) {
-            console.error("Error registering socket", error);
-          }
+    socket.on("connect", async () => {
+      console.log("giiiiiiiiiiiii");
+    //  socket.emit("register", { userId: 10385756, socketId: socket.id });
+     /* try {
+        const response = await fetch("http://localhost:3000/v1/chat/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${bearerToken}`, // Include the bearer token in the
+          },
+          body: JSON.stringify({  socketId: socket.id }),
         });
-    
+
+        if (response.ok) {
+          console.log("Socket registered successfully");
+        } else {
+          console.error("Failed to register socket");
+        }
+      } catch (error) {
+        console.error("Error registering socket", error);
+      }*/
+    });
 
     socket.on("userJoined", ({ userId, messages }) => {
       console.log(userId);
